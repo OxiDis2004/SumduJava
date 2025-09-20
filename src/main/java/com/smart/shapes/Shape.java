@@ -1,21 +1,14 @@
 package com.smart.shapes;
 
+import com.smart.draw.DrawingAPI;
+
 public abstract class Shape {
 
-    private String id;
-    protected String type;
+    protected DrawingAPI drawingAPI;
 
-    public String getType() {
-        return type;
+    public Shape(DrawingAPI drawingAPI) {
+        this.drawingAPI = drawingAPI;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public abstract Object clone();
+    public abstract void draw();
 }
