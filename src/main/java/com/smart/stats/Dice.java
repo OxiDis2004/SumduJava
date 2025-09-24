@@ -1,4 +1,4 @@
-package com.smart;
+package com.smart.stats;
 
 import java.util.Arrays;
 import java.util.Random;

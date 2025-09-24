@@ -1,4 +1,4 @@
-package com.smart;
+package com.smart.stats;
 
 public enum StatsName {
     STRENGTH("strength"),

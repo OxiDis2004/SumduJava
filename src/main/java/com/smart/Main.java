@@ -1,24 +1,24 @@
 package com.smart;
 
-import com.smart.Factory.CharacterClass;
-import com.smart.Factory.ClassFactory;
+import com.smart.abstractfactory.HalfingFactory;
+import com.smart.abstractfactory.HobgoblinFactory;
+import com.smart.abstractfactory.RaceAbstractFactory;
+import com.smart.races.CharacterRace;
+import com.smart.stats.Stats;
 
 public class Main {
-    public final static ClassFactory classFactory = new ClassFactory();
 
-    public static Character generateCharacter(String type, String name) {
-        CharacterClass characterClass = classFactory.getClass(type);
+    public static Character generate(RaceAbstractFactory factory, String name) {
+        CharacterRace race = factory.create();
         Stats stats = new Stats().generate();
-        Character ch = new Character(name, characterClass, stats);
-        ch.addBonuses();
+        Character ch = new Character(name, race, stats);
+        ch.addRaceBonuses();
         return ch;
     }
 
     public static void main(String[] args) {
-        Character ranger = generateCharacter("Ranger", "Achsil");
-        ranger.talk();
+        generate(new HobgoblinFactory(), "Gagamaru").talk();
         System.out.println();
-        Character bard = generateCharacter("Bard", "Maskil");
-        bard.talk();
+        generate(new HalfingFactory(), "German").talk();
     }
 }

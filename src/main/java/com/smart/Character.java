@@ -1,32 +1,18 @@
 package com.smart;
 
-import com.smart.Factory.Bard;
-import com.smart.Factory.CharacterClass;
-import com.smart.Factory.Ranger;
+import com.smart.races.CharacterRace;
+import com.smart.stats.Stats;
 
-public class Character {
-    private String name;
-    private CharacterClass chClass;
-    private Stats attributes;
-    private int hp;
+public record Character(String name, CharacterRace race, Stats attributes) {
 
-    public Character(String name, CharacterClass chClass, Stats attributes) {
-        this.name = name;
-        this.chClass = chClass;
-        this.attributes = attributes;
-    }
-
-    public void addBonuses() {
-        this.hp = (int) (chClass.getHP() + (double) (attributes.state.get(StatsName.CONSTITUTION) / 2) - 5);
+    public void addRaceBonuses() {
+        attributes.state.forEach((statName, statValue) -> attributes.state.put(statName, statValue + race.getRaceBonuses().state.getOrDefault(statName, 0)));
     }
 
     public void talk() {
-        if (this.chClass instanceof Bard) {
-            System.out.println(this.name + " is a Bard");
-        } else if (this.chClass instanceof Ranger) {
-            System.out.println(this.name + " is a Ranger");
-        }
-        System.out.println("HP: " + this.hp);
-        chClass.printMagika();
+        System.out.print(this.name + " says ");
+        race.saySMTH();
+        System.out.println(this.name + " has:");
+        attributes.print();
     }
 }
