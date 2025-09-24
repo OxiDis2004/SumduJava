@@ -1,8 +1,11 @@
 package com.smart.stats;
 
+import com.smart.DataElement;
+import com.smart.visitor.DataElementsVisitor;
+
 import java.util.HashMap;
 
-public class Stats {
+public class Stats implements DataElement {
 
     public HashMap<StatsName, Integer> state = new HashMap<>();
 
@@ -18,8 +21,14 @@ public class Stats {
     }
 
     public void print() {
+        System.out.println("Stats:");
         for (var entry : state.entrySet()) {
             System.out.printf("%s: %s%n", entry.getKey().getName(), entry.getValue());
         }
+    }
+
+    @Override
+    public void accept(DataElementsVisitor visitor) {
+        visitor.visit(this);
     }
 }
