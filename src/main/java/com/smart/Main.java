@@ -1,34 +1,24 @@
 package com.smart;
 
-import com.smart.memento.CareTaker;
+import com.smart.Factory.CharacterClass;
+import com.smart.Factory.ClassFactory;
 
 public class Main {
+    public final static ClassFactory classFactory = new ClassFactory();
 
-    private static final Stats stats = new Stats();
-    private static final CareTaker ct = new CareTaker();
-
-    public static void main(String[] args) {
-        Character character = new Character("Gremlin", "Dworg", getNewStats());
-        character.printSheet();
-        System.out.println();
-
-        character.setAttribute(getNewStats());
-        character.printSheet();
-        System.out.println();
-
-        character.setAttribute(getNewStats());
-        character.printSheet();
-        System.out.println();
-
-        stats.getStateFromMemento(ct.get(0));
-        character.setAttribute(stats);
-        character.printSheet();
+    public static Character generateCharacter(String type, String name) {
+        CharacterClass characterClass = classFactory.getClass(type);
+        Stats stats = new Stats().generate();
+        Character ch = new Character(name, characterClass, stats);
+        ch.addBonuses();
+        return ch;
     }
 
-    public static Stats getNewStats() {
-        stats.generate();
-        stats.print();
-        ct.add(stats.saveStateToMemento());
-        return stats;
+    public static void main(String[] args) {
+        Character ranger = generateCharacter("Ranger", "Achsil");
+        ranger.talk();
+        System.out.println();
+        Character bard = generateCharacter("Bard", "Maskil");
+        bard.talk();
     }
 }
