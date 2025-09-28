@@ -3,6 +3,8 @@ package com.smart.classes;
 import com.smart.DataElement;
 import com.smart.visitor.DataElementsVisitor;
 
+import java.util.TreeMap;
+
 public abstract class CharacterClass implements DataElement {
     private final String name;
     private final int hp;
@@ -10,6 +12,10 @@ public abstract class CharacterClass implements DataElement {
     public CharacterClass(String name, int hp) {
         this.name = name;
         this.hp = hp;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getHP() {
@@ -21,8 +27,8 @@ public abstract class CharacterClass implements DataElement {
     }
 
     @Override
-    public void accept(DataElementsVisitor visitor) {
-        visitor.visit(this);
+    public void accept(DataElementsVisitor visitor, TreeMap<String, Object> collector) {
+        visitor.visit(this, collector);
     }
 
     public abstract void printMagika();

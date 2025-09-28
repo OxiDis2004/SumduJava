@@ -3,7 +3,7 @@ package com.smart.classes;
 import java.util.List;
 
 public class Bard extends CharacterClass {
-    private List<String> spells;
+    private final List<String> spells;
 
     public Bard() {
         super("Bard", 8);

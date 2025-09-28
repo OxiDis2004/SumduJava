@@ -8,11 +8,12 @@ import com.smart.stats.StatsName;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ElementVisitor implements DataElementsVisitor {
 
     @Override
-    public void visit(Character character) {
+    public void visit(Character character, TreeMap<String, Object> collector) {
         Map<StatsName, Integer> updated = new HashMap<>();
 
         character.getAttributes()
@@ -33,17 +34,17 @@ public class ElementVisitor implements DataElementsVisitor {
     }
 
     @Override
-    public void visit(CharacterRace race) {
+    public void visit(CharacterRace race, TreeMap<String, Object> collector) {
         race.print();
     }
 
     @Override
-    public void visit(CharacterClass cClass) {
+    public void visit(CharacterClass cClass, TreeMap<String, Object> collector) {
         System.out.println(cClass.toString());
     }
 
     @Override
-    public void visit(Stats stats) {
+    public void visit(Stats stats, TreeMap<String, Object> collector) {
         stats.print();
     }
 }

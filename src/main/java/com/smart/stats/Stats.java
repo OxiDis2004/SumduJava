@@ -4,6 +4,7 @@ import com.smart.DataElement;
 import com.smart.visitor.DataElementsVisitor;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 public class Stats implements DataElement {
 
@@ -28,7 +29,7 @@ public class Stats implements DataElement {
     }
 
     @Override
-    public void accept(DataElementsVisitor visitor) {
-        visitor.visit(this);
+    public void accept(DataElementsVisitor visitor, TreeMap<String, Object> collector) {
+        visitor.visit(this, collector);
     }
 }

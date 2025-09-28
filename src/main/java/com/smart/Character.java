@@ -7,6 +7,7 @@ import com.smart.visitor.DataElementsVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class Character implements DataElement {
     private final String name;
@@ -55,7 +56,7 @@ public class Character implements DataElement {
     }
 
     @Override
-    public void accept(DataElementsVisitor visitor) {
-        visitor.visit(this);
+    public void accept(DataElementsVisitor visitor, TreeMap<String, Object> collector) {
+        visitor.visit(this, collector);
     }
 }
