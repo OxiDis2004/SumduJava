@@ -19,7 +19,12 @@ public class View {
         this.elementVisitor = elementVisitor;
     }
 
+    public void printSeparatorLine() {
+        System.out.println("---------------------------------------------");
+    }
+
     public void printMenu(List<String> menu) {
+        printSeparatorLine();
         System.out.println("Select one function from menu:");
         for (int i = 1; i <= menu.size(); i++) {
             System.out.println(i + ". " + menu.get(i - 1));
@@ -31,6 +36,7 @@ public class View {
     }
 
     public void printCharacter(Character character) {
+        printSeparatorLine();
         character.accept(elementVisitor, null);
     }
 
@@ -39,10 +45,12 @@ public class View {
     }
 
     public void printPathToSavedJson(String path) {
+        printSeparatorLine();
         System.out.println("Saved character path: " + path);
     }
 
     public void printCharacterRaces(List<RaceAbstractFactory> factories) {
+        printSeparatorLine();
         System.out.println("Choose a race of character: ");
         for (int i = 0; i < factories.size(); i++) {
             CharacterRace race = factories.get(i).create();
@@ -52,6 +60,7 @@ public class View {
     }
 
     public void printCharacterClasses(List<String> classes) {
+        printSeparatorLine();
         System.out.println("Choose a class for character: ");
         for (int i = 1; i <= classes.size(); i++) {
             CharacterClass characterClass = CharacterClassFactory.getClass(classes.get(i - 1));
@@ -62,11 +71,13 @@ public class View {
     }
 
     public void printStats(Stats stats) {
+        printSeparatorLine();
         System.out.println("Currently stats: ");
         stats.accept(elementVisitor, null);
     }
 
     public void printPrevStats(List<Stats> prevStats) {
+        printSeparatorLine();
         System.out.println("Previous stats: ");
         for (int i = 0; i < prevStats.size(); i++) {
             System.out.println(i + 1 + ". ");

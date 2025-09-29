@@ -9,6 +9,26 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.smart.Main'
+    }
+}
+
+tasks.register('fatJar', Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.smart.Main'
+    }
+    archiveBaseName.set("${project.name}-fatJar")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    with jar
+}
+
 dependencies {
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 

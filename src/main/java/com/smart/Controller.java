@@ -42,7 +42,7 @@ public class Controller {
     public int menu() {
         view.printMenu(menu);
         int choice = view.getInputFromConsoleInt(
-                "Enter your choice:",
+                "Enter your choice: ",
                 "You didn't enter choice."
         );
 
@@ -50,7 +50,7 @@ public class Controller {
             view.printError("Invalid choice.");
             return -1;
         }
-        else if (choice == menu.size()) {
+        else if (choice == menu.size() - 1) {
             return 0;
         }
         else {
@@ -237,9 +237,11 @@ public class Controller {
     public String saveJson() {
         character.accept(saveVisitor, dataUnit);
         String path = character.getName() + ".json";
-        try (FileWriter writer = new FileWriter(path)) {
+        File file = new File(path);
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(new JSONObject(dataUnit).toJSONString());
-            return path;
+            writer.flush();
+            return file.getAbsolutePath();
         } catch (IOException e) {
             System.out.println("Error writing json file.");
         }
