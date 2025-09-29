@@ -1,6 +1,6 @@
-package com.smart.classes;
+package com.smart.models.classes;
 
-import com.smart.DataElement;
+import com.smart.models.DataElement;
 import com.smart.visitor.DataElementsVisitor;
 
 import java.util.TreeMap;

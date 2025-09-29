@@ -1,9 +1,10 @@
-package com.smart.stats;
+package com.smart.models.stats;
 
-import com.smart.DataElement;
+import com.smart.models.DataElement;
 import com.smart.visitor.DataElementsVisitor;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class Stats implements DataElement {
@@ -22,7 +23,6 @@ public class Stats implements DataElement {
     }
 
     public void print() {
-        System.out.println("Stats:");
         for (var entry : state.entrySet()) {
             System.out.printf("%s: %s%n", entry.getKey().getName(), entry.getValue());
         }
@@ -31,5 +31,17 @@ public class Stats implements DataElement {
     @Override
     public void accept(DataElementsVisitor visitor, TreeMap<String, Object> collector) {
         visitor.visit(this, collector);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Stats stats = (Stats) o;
+        return Objects.equals(state, stats.state);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(state);
     }
 }

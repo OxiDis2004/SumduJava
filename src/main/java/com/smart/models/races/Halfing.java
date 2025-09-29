@@ -1,6 +1,6 @@
-package com.smart.races;
+package com.smart.models.races;
 
-import com.smart.stats.Stats;
+import com.smart.models.stats.Stats;
 
 public class Halfing extends CharacterRace {
 

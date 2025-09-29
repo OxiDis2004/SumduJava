@@ -1,4 +1,4 @@
-package com.smart;
+package com.smart.models;
 
 import com.smart.visitor.DataElementsVisitor;
 

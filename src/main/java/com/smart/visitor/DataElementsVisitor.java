@@ -1,9 +1,9 @@
 package com.smart.visitor;
 
-import com.smart.Character;
-import com.smart.classes.CharacterClass;
-import com.smart.races.CharacterRace;
-import com.smart.stats.Stats;
+import com.smart.models.Character;
+import com.smart.models.classes.CharacterClass;
+import com.smart.models.races.CharacterRace;
+import com.smart.models.stats.Stats;
 
 import java.util.TreeMap;
 

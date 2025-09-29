@@ -1,7 +1,7 @@
-package com.smart.classes;
+package com.smart.models.classes;
 
 public class Ranger extends CharacterClass {
-    private String perk;
+    private final String perk;
 
     public Ranger() {
         super("Ranger", 10);

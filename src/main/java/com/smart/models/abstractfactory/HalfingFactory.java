@@ -1,9 +1,9 @@
-package com.smart.abstractfactory;
+package com.smart.models.abstractfactory;
 
-import com.smart.races.CharacterRace;
-import com.smart.races.Halfing;
-import com.smart.stats.Stats;
-import com.smart.stats.StatsName;
+import com.smart.models.races.CharacterRace;
+import com.smart.models.races.Halfing;
+import com.smart.models.stats.Stats;
+import com.smart.models.stats.StatsName;
 
 public class HalfingFactory implements RaceAbstractFactory {
     @Override

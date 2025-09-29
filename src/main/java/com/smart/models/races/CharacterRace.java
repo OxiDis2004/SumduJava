@@ -1,7 +1,7 @@
-package com.smart.races;
+package com.smart.models.races;
 
-import com.smart.DataElement;
-import com.smart.stats.Stats;
+import com.smart.models.DataElement;
+import com.smart.models.stats.Stats;
 import com.smart.visitor.DataElementsVisitor;
 
 import java.util.TreeMap;
@@ -24,7 +24,7 @@ public abstract class CharacterRace implements DataElement {
     }
 
     public void print() {
-        System.out.println("Name: " + name + ", Bonuses: " );
+        System.out.println("Name: " + name + ",\nBonuses: " );
         bonuses.print();
     }
 
