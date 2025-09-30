@@ -6,11 +6,19 @@ import com.smart.models.stats.Stats;
 import com.smart.models.stats.StatsName;
 
 public class HalfingFactory implements RaceAbstractFactory {
+
+    private final String name = "Halfing";
+
     @Override
     public CharacterRace create() {
         Stats bonuses = new Stats();
         bonuses.state.put(StatsName.DEXTERITY, 2);
         bonuses.state.put(StatsName.CONSTITUTION, 1);
-        return new Halfing("Halfing", bonuses);
+        return new Halfing(name, bonuses);
+    }
+
+    @Override
+    public String name() {
+        return name;
     }
 }

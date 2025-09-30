@@ -22,12 +22,6 @@ public class Stats implements DataElement {
         return this;
     }
 
-    public void print() {
-        for (var entry : state.entrySet()) {
-            System.out.printf("%s: %s%n", entry.getKey().getName(), entry.getValue());
-        }
-    }
-
     @Override
     public void accept(DataElementsVisitor visitor, TreeMap<String, Object> collector) {
         visitor.visit(this, collector);
@@ -43,5 +37,14 @@ public class Stats implements DataElement {
     @Override
     public int hashCode() {
         return Objects.hashCode(state);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (var entry : state.entrySet()) {
+            builder.append(String.format("%s = %s%n", entry.getKey().getName(), entry.getValue()));
+        }
+        return builder.toString();
     }
 }

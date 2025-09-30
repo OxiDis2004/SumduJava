@@ -1,24 +1,22 @@
 package com.smart;
 
 import com.smart.memento.CareTaker;
-import com.smart.visitor.ElementVisitor;
 import com.smart.visitor.SaveVisitor;
+import javafx.application.Platform;
 
 public class Main {
 
     public static void main(String[] args) {
-        ElementVisitor elementVisitor = new ElementVisitor();
-        View view = new View(elementVisitor);
-
-        CareTaker careTaker = new CareTaker();
-        SaveVisitor saveVisitor = new SaveVisitor();
-        Controller controller = new Controller(view, careTaker, saveVisitor);
-
-        System.out.println("Program Started");
-        while (true) {
-            int result = controller.menu();
-            if (result == 0)
-                break;
-        }
+        Platform.startup(() -> {
+            CareTaker careTaker = new CareTaker();
+            SaveVisitor saveVisitor = new SaveVisitor();
+            GraphicView view = new GraphicView();
+            new Controller(view, careTaker, saveVisitor);
+            try {
+                view.start(new javafx.stage.Stage());
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        });
     }
 }

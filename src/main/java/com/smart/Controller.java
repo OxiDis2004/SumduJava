@@ -20,198 +20,119 @@ import java.util.*;
 public class Controller {
 
     private final static TreeMap<String, Object> dataUnit = new TreeMap<>();
-    private final static List<String> menu = List.of(
-            "Create new character",
-            "Show current character",
-            "Save current character in json file",
-            "Exit"
-    );
+    private final static List<RaceAbstractFactory> factories = new ArrayList<>();
+    private final static List<String> classes = new ArrayList<>();
 
-    private final View view;
+    private final GraphicView view;
     private final CareTaker careTaker;
     private final SaveVisitor saveVisitor;
 
     private Character character;
+    private Stats stats;
+    private int currentStatsIndex = -1;
 
-    public Controller(View view, CareTaker careTaker, SaveVisitor saveVisitor) {
+    public Controller(GraphicView view, CareTaker careTaker, SaveVisitor saveVisitor) {
         this.view = view;
         this.careTaker = careTaker;
         this.saveVisitor = saveVisitor;
+
+        factories.addAll(List.of(
+            new HalfingFactory(),
+            new HobgoblinFactory()
+        ));
+
+        classes.addAll(List.of(
+            CharacterClassFactory.BARD,
+            CharacterClassFactory.RANGER
+        ));
+
+        view.setRaceLoader(this::characterRaces);
+        view.setCharacterClassLoader(this::characterClasses);
+        view.setStatsArea(this::getStats);
+        view.setGenerateHandler(this::generateStats);
+        view.setRestorePrevStateHandler(() -> restoreStats(true));
+        view.setRestoreNextStateHandler(() -> restoreStats(false));
+        view.setAddCharacterHandler(this::createCharacter);
+        view.setSaveJsonHandler(this::saveJson);
     }
 
-    public int menu() {
-        view.printMenu(menu);
-        int choice = view.getInputFromConsoleInt(
-                "Enter your choice: ",
-                "You didn't enter choice."
-        );
+    private String createCharacter() {
+        Character tmp;
 
-        if (choice < 0 || choice > menu.size()) {
-            view.printError("Invalid choice.");
-            return -1;
-        }
-        else if (choice == menu.size() - 1) {
-            return 0;
-        }
-        else {
-            updateView(choice);
-            return 1;
-        }
-    }
+        try {
+            String characterName = view.getCharacterName();
+            if (characterName == null || characterName.isEmpty())
+                throw new Exception("Name didn't define");
 
-    public void updateView(int choice) {
-        switch (choice) {
-            case 0:
-                createCharacter();
-                break;
-            case 1:
-                if (character == null) {
-                    view.printErrorCharacter();
-                    break;
-                }
-                view.printCharacter(character);
-                break;
-            case 2:
-                if (character == null) {
-                    view.printErrorCharacter();
-                    break;
-                }
-                String savedCharacterPath = saveJson();
-                if (savedCharacterPath == null) {
-                    view.printError("Save failed.");
-                    break;
-                }
-                view.printPathToSavedJson(savedCharacterPath);
-                break;
-        }
-    }
+            CharacterRace race = getCharacterRace();
+            if (race == null)
+                throw new Exception("Race didn't select");
 
-    public void createCharacter() {
-        System.out.println("Creating character...");
-        character = null;
-        String characterName = null;
-        CharacterRace race = null;
-        CharacterClass cClass = null;
-        Stats stats = null;
+            CharacterClass cClass = getCharacterClass();
+            if (cClass == null)
+                throw new Exception("Class didn't select");
 
-        while (character == null) {
-            if (characterName == null) {
-                characterName = view.getInputFromConsole(
-                        "Enter character name: ",
-                        "Character name is empty."
-                );
-                if (characterName == null) {
-                    continue;
-                }
-            }
+            if (stats == null)
+                throw new Exception("Stats didn't generate");
 
-            if (race == null) {
-                race = getCharacterRace();
-                if (race == null)
-                    continue;
-            }
-
-            if (cClass == null) {
-                cClass = getCharacterClass();
-                if (cClass == null)
-                    continue;
-            }
-
-            if (stats == null) {
-                System.out.println("Generating stats...");
-                stats = new Stats().generate();
-            }
-
-            Stats update = getNewStats(stats);
-            if (update == null || !update.equals(stats)) {
-                stats = update;
-                continue;
-            }
-
-            System.out.println("Creating character...");
-            character = new Character(characterName, race, cClass, stats);
+            tmp = new Character(characterName, race, cClass, stats);
             addBonusesFromRace();
-            System.out.println("Character created");
+            this.character = tmp;
+            return this.character.info();
+        } catch (Exception e) {
+            return "{error} " + e.getMessage();
         }
+    }
+
+    private List<String> characterRaces() {
+        return factories.stream().map(RaceAbstractFactory::name).toList();
     }
 
     private CharacterRace getCharacterRace() {
-        List<RaceAbstractFactory> factories = List.of(
-                new HalfingFactory(),
-                new HobgoblinFactory()
-        );
-
-        view.printCharacterRaces(factories);
-        int choice = view.getInputFromConsoleInt(
-                "Enter number of race from the list: ",
-                "Input number of race is empty."
-        );
-
-        if (choice < 0 || choice >= factories.size()) {
-            view.printError("Invalid choice.");
+        int selectedRace = view.getRace();
+        if (selectedRace < 0 || selectedRace >= factories.size())
             return null;
-        }
 
-        return factories.get(choice).create();
+        return factories.get(selectedRace).create();
+    }
+
+    private List<String> characterClasses() {
+        return classes;
     }
 
     private CharacterClass getCharacterClass() {
-        List<String> classes = List.of(
-                CharacterClassFactory.BARD,
-                CharacterClassFactory.RANGER
-        );
-
-        view.printCharacterClasses(classes);
-        int choice = view.getInputFromConsoleInt(
-                "Enter number of classes from the list: ",
-                "Input number of class is empty."
-        );
-
-        if (choice < 0 || choice >= classes.size()) {
-            view.printError("Invalid choice.");
+        String selectedClass = view.getCharacterClass();
+        if (selectedClass == null || selectedClass.isEmpty()) {
             return null;
         }
 
-        return CharacterClassFactory.getClass(classes.get(choice));
+        return CharacterClassFactory.getClass(selectedClass);
     }
 
-    private Stats getNewStats(Stats stats) {
-        view.printStats(stats);
-        int choice = view.getInputFromConsoleInt(
-                "Are u want to save this stats or rerole or get prev? (0 - 'no, save' / 1 - 'yes, rerole' / 2 - 'get prev'): ",
-                "Invalid input"
-        ) + 1;
-
-        if (choice == 2) {
-            List<Stats> prevStats = careTaker.getList().stream().map(item -> {
-                Stats prevStat = new Stats();
-                prevStat.state = item.state();
-                return prevStat;
-            }).toList();
-
-            do {
-                view.printPrevStats(prevStats);
-                choice = view.getInputFromConsoleInt(
-                        "Enter your choice: ",
-                        "Invalid input."
-                );
-
-            } while (choice < 0 || choice >= prevStats.size());
-
-            careTaker.add(new Memento(stats.state));
-            stats = prevStats.get(choice);
-            careTaker.remove(choice);
+    private String getStats() {
+        if (stats == null) {
+            return "No stats";
         }
-        else if (choice == 1) {
-            careTaker.add(new Memento(stats.state));
-            stats = null;
-        }
-        else if (choice != 0) {
-            stats = null;
-            view.printError("Invalid choice.");
-        }
+        return stats.toString();
+    }
 
-        return stats;
+    private void generateStats() {
+        if (stats == null) {
+            stats = new Stats();
+        }
+        stats = stats.generate();
+        careTaker.add(new Memento(stats.state));
+        currentStatsIndex++;
+        view.refreshStatsArea();
+    }
+
+    private void restoreStats(boolean prev) {
+        currentStatsIndex = prev ? currentStatsIndex - 1 : currentStatsIndex + 1;
+        if (currentStatsIndex < 0 || currentStatsIndex >= careTaker.getList().size()) {
+            return;
+        }
+        stats.state = careTaker.get(currentStatsIndex).state();
+        view.refreshStatsArea();
     }
 
     private void addBonusesFromRace() {
@@ -234,7 +155,10 @@ public class Controller {
         character.setHp(newHP);
     }
 
-    public String saveJson() {
+    private String saveJson() {
+        if (character == null) {
+            return "{error} Character is not created";
+        }
         character.accept(saveVisitor, dataUnit);
         String path = character.getName() + ".json";
         File file = new File(path);
@@ -242,9 +166,8 @@ public class Controller {
             writer.write(new JSONObject(dataUnit).toJSONString());
             writer.flush();
             return file.getAbsolutePath();
-        } catch (IOException e) {
-            System.out.println("Error writing json file.");
+        } catch (Exception e) {
+            return "{error} " + e;
         }
-        return "";
     }
 }

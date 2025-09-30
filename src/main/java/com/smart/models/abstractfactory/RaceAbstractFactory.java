@@ -4,4 +4,5 @@ import com.smart.models.races.CharacterRace;
 
 public interface RaceAbstractFactory {
     CharacterRace create();
+    String name();
 }

@@ -23,9 +23,8 @@ public abstract class CharacterRace implements DataElement {
         return bonuses;
     }
 
-    public void print() {
-        System.out.println("Name: " + name + ",\nBonuses: " );
-        bonuses.print();
+    public String info() {
+        return "Name: " + name + ",\nBonuses: \n" + bonuses.toString();
     }
 
     @Override

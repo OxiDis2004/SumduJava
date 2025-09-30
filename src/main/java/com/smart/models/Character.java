@@ -47,12 +47,11 @@ public class Character implements DataElement {
         this.hp = hp;
     }
 
-    public void talk() {
-        System.out.print(this.name + " says ");
-        getRace().saySMTH();
-        System.out.println(this.name + " has:");
-        getAttributes().print();
-        getCharacterClass().printMagika();
+    public String info() {
+        return "Name: " + this.name + ", HP: " + this.hp + "\n"
+                + "race: " + getRace().info() + "\n"
+                + " has:\n" + getAttributes().toString() + "\n"
+                + getCharacterClass().printMagika();
     }
 
     @Override
