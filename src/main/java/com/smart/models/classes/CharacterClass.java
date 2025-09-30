@@ -31,6 +31,6 @@ public abstract class CharacterClass implements DataElement {
         visitor.visit(this, collector);
     }
 
-    public abstract void printMagika();
+    public abstract String printMagika();
 }
 

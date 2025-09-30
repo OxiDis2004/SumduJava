@@ -11,8 +11,7 @@ public class Bard extends CharacterClass {
     }
 
     @Override
-    public void printMagika() {
-        System.out.print("Spells: ");
-        System.out.println(String.join(", ", spells));
+    public String printMagika() {
+        return "Spells: " + String.join(", ", spells);
     }
 }

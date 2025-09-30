@@ -9,7 +9,7 @@ public class Ranger extends CharacterClass {
     }
 
     @Override
-    public void printMagika() {
-        System.out.println("Perk: " + this.perk);
+    public String printMagika() {
+        return "Perk: " + this.perk;
     }
 }
