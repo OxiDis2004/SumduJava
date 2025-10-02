@@ -17,6 +17,6 @@ public class Main {
             ex.printStackTrace();
         }
 
-        System.out.println("Final result: " + bank.account);
+        System.out.println("Final result: " + bank.getAccount());
     }
 }

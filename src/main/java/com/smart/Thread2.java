@@ -8,7 +8,10 @@ public class Thread2 implements Runnable {
     }
 
     @Override
-    public void run() {
-        bank.dec();
+    synchronized public void run() {
+        for (int i = 1; i <= 20000; i++) {
+            bank.setAccount(bank.getAccount() - 1);
+        }
+        System.out.println("Final account desc: " + bank.getAccount());
     }
 }
