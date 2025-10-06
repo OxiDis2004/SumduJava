@@ -20,12 +20,11 @@ public class ClientThread implements Runnable {
 
     @Override
     public void run() {
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             System.out.println("Client No. " + numberClient + " connected.");
             new PrintWriter(clientSocket.getOutputStream(), true).println("Client No. " + numberClient + ".");
 
-            String messageInput = null;
+            String messageInput;
             while (true) {
                 messageInput = in.readLine();
 
@@ -37,9 +36,8 @@ public class ClientThread implements Runnable {
                 System.out.println("Client No. " + numberClient + ": " + messageInput);
                 chatServer.sendMessageForAllClient(numberClient, messageInput);
             }
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace(System.out);
         }
     }
 }

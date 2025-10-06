@@ -1,31 +1,38 @@
 package com.chat.client;
 
+import com.chat.exception.ClientInputStreamClosed;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.function.Supplier;
 
 public class ReceiveMessageFromServer implements Runnable {
 
-    private final InputStream inputStreamServer;
+    private final BufferedReader serverReader;
+    private final Supplier<Boolean> running;
 
-    public ReceiveMessageFromServer(InputStream inputStreamServer) {
-        this.inputStreamServer = inputStreamServer;
+    public ReceiveMessageFromServer(BufferedReader serverReader, Supplier<Boolean> running) {
+        this.serverReader = serverReader;
+        this.running = running;
     }
 
     @Override
     public void run() {
         try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamServer));
             String serverMessage;
-            while (true) {
-                serverMessage = bufferedReader.readLine();
-                if (serverMessage != null) {
-                    System.out.println("\n" + serverMessage + "\nEnter message: ");
-                }
+            while (running.get()) {
+                if (serverReader == null)
+                    throw new ClientInputStreamClosed();
+
+                serverMessage = serverReader.readLine();
+                if (serverMessage == null)
+                    continue;
+
+                System.out.println(serverMessage + "\nEnter message: ");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (running.get())
+                e.printStackTrace(System.out);
         }
     }
 }

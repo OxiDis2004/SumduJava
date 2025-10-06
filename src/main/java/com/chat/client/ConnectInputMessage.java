@@ -1,54 +1,77 @@
 package com.chat.client;
 
+import com.chat.exception.ClientNotConnected;
+import com.chat.exception.ServerOutputStreamClosed;
+import com.chat.exception.UserInputStreamClosed;
+
 import java.io.*;
 import java.net.Socket;
 
 public class ConnectInputMessage implements Runnable {
 
-    private final Socket serverConnect;
-    private final InputStream inputStreamServer;
+    private final static String HOST = "localhost";
+    private final static int PORT = 8800;
 
-    public ConnectInputMessage() throws IOException {
-        serverConnect = new Socket("localhost", 8800);
-        inputStreamServer = serverConnect.getInputStream();
+    private final Socket serverConnect;
+    private final BufferedReader serverReader;
+    private final PrintWriter serverWriter;
+    private final BufferedReader userInputReader;
+    private volatile boolean running = true;
+
+    public ConnectInputMessage() throws ClientNotConnected {
+        try {
+            serverConnect = new Socket(HOST, PORT);
+            serverReader = new BufferedReader(new InputStreamReader(serverConnect.getInputStream()));
+            serverWriter = new PrintWriter(serverConnect.getOutputStream(), true);
+            userInputReader = new BufferedReader(new InputStreamReader(System.in));
+
+        } catch (IOException e) {
+            throw new ClientNotConnected(e);
+        }
     }
 
     @Override
     public void run() {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamServer));
-        String serverMessage;
-        while (true) {
-            try {
-                serverMessage = bufferedReader.readLine();
-                if (serverMessage != null) {
-                    System.out.println(serverMessage + "\n");
-                    break;
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        Thread receiveThread = new Thread(new ReceiveMessageFromServer(serverReader, () -> running));
+        receiveThread.start();
 
-        PrintWriter out;
-        BufferedReader inputUser = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            String userMessage;
+            while (running) {
+                if (userInputReader == null)
+                    throw new UserInputStreamClosed();
 
-        String userMessage;
-        while (true) {
-            System.out.println("Enter message: ");
-            try {
-                userMessage = inputUser.readLine();
-                out = new PrintWriter(serverConnect.getOutputStream(), true);
-                out.println(userMessage);
-                if ("exit".equals(userMessage)) {
-                    break;
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                userMessage = userInputReader.readLine();
+                if (userMessage == null || userMessage.trim().isEmpty())
+                    continue;
+
+                if (serverWriter == null)
+                    throw new ServerOutputStreamClosed();
+
+                serverWriter.println(userMessage);
+                if ("exit".equals(userMessage))
+                    running = false;
             }
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        } finally {
+            stopConnection();
         }
     }
 
-    public InputStream getInputStreamServer() {
-        return inputStreamServer;
+    public void stopConnection() {
+        running = false;
+        try {
+            if (serverReader != null)
+                serverReader.close();
+            if (serverWriter != null)
+                serverWriter.close();
+            if (userInputReader != null)
+                userInputReader.close();
+            if (serverConnect != null)
+                serverConnect.close();
+        } catch (IOException e) {
+            e.printStackTrace(System.out);
+        }
     }
 }

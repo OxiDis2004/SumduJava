@@ -7,10 +7,5 @@ public class ChatClient {
         ConnectInputMessage connectInputMessage = new ConnectInputMessage();
         Thread connectThread = new Thread(connectInputMessage);
         connectThread.start();
-
-        ReceiveMessageFromServer receiveMessageFromServer =
-                new ReceiveMessageFromServer(connectInputMessage.getInputStreamServer());
-        Thread receiveThread = new Thread(receiveMessageFromServer);
-        receiveThread.start();
     }
 }
